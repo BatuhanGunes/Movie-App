@@ -1,7 +1,6 @@
 package com.mobillium.movieapp.feature_movie.presentation.movie_list.adapters
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.Navigation
@@ -26,7 +25,7 @@ class MovieRecyclerViewAdapter(private val currentList: MutableList<MovieEntity>
             itemBinding.movieItemUpdateDate.text = movie.releaseDate.reformatDate()
 
             val rootContext: Context = itemBinding.root.context
-            if (movie.posterPath.isNotEmpty()) {
+            if (!movie.posterPath.isNullOrEmpty()) {
                 val basePosterPath = movie.posterPath.getBasePosterPath()
                 rootContext.loadImageFromURL(itemBinding.itemMovieImage, basePosterPath)
             } else {

@@ -99,8 +99,10 @@ class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
     private fun setUpSliderView(resultList: List<MovieEntity>) {
         val imageList = ArrayList<SlideModel>()
         for (movieEntity in resultList) {
-            val imageUrl = movieEntity.backdropPath.getBaseBackdropPath()
-            imageList.add(SlideModel(imageUrl, movieEntity.title))
+            if (!movieEntity.backdropPath.isNullOrEmpty()) {
+                val imageUrl = movieEntity.backdropPath.getBaseBackdropPath()
+                imageList.add(SlideModel(imageUrl, movieEntity.title))
+            }
         }
         binding.imageSlider.setImageList(imageList, ScaleTypes.FIT)
         listenImageSliderClick(resultList)

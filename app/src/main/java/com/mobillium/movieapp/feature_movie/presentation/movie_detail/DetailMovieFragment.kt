@@ -80,8 +80,8 @@ class DetailMovieFragment : Fragment(R.layout.fragment_movie_detail) {
         binding.loadingProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
-    private fun loadPosterImage(posterPath: String) {
-        if (posterPath.isNotEmpty()) {
+    private fun loadPosterImage(posterPath: String?) {
+        if (!posterPath.isNullOrEmpty()) {
             val basePosterPath = posterPath.getBasePosterPath()
             requireContext().loadImageFromURL(binding.itemMovieImage, basePosterPath)
         } else {
