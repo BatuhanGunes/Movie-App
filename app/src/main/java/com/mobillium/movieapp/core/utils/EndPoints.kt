@@ -5,6 +5,7 @@ object EndPoints {
     private const val API_KEY = "0184dfcbaa464d6ba8e68b9a7a3ed436"
 
     private const val BASE_POSTER_PATH = "https://image.tmdb.org/t/p/w342"
+    private const val BASE_BACKDROP_PATH = "https://image.tmdb.org/t/p/w780"
 
     const val BASE_URL = "https://api.themoviedb.org/"
 
@@ -15,5 +16,10 @@ object EndPoints {
     @JvmStatic
     fun getBasePosterPath(posterPath: String?): String {
         return BASE_POSTER_PATH + posterPath
+    }
+
+    @JvmStatic
+    fun getBaseBackdropPath(backdropPath: String?): String {
+        return BASE_BACKDROP_PATH + backdropPath
     }
 }
