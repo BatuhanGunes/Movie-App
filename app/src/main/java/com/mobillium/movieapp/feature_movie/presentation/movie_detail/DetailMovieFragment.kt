@@ -54,13 +54,19 @@ class DetailMovieFragment : Fragment(R.layout.fragment_movie_detail) {
         when (uiState) {
             is MovieDetailFragmentUIState.Init -> Unit
             is MovieDetailFragmentUIState.IsLoading -> handleLoading(uiState.isLoading)
-            is MovieDetailFragmentUIState.ShowToast -> requireContext().showToast(uiState.message)
+            is MovieDetailFragmentUIState.ShowToast -> handleToastMessage(uiState.message)
             is MovieDetailFragmentUIState.SuccessMovieDetailDetail -> handleMovieDetail(uiState.movieDetailEntity)
             is MovieDetailFragmentUIState.Error -> handleError(uiState.message, uiState.errorCode)
         }
     }
 
+    private fun handleToastMessage(message: String) {
+        binding.errorTextView.visibility = View.VISIBLE
+        requireContext().showToast(message)
+    }
+
     private fun handleError(errorMessage: String, errorCode: Int) {
+        binding.errorTextView.visibility = View.VISIBLE
         requireContext().showGenericAlertDialog(
             message = getString(
                 R.string.error_msg_and_error_code_message,
@@ -74,8 +80,8 @@ class DetailMovieFragment : Fragment(R.layout.fragment_movie_detail) {
         binding.loadingProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
-    private fun loadPosterImage(posterPath: String) {
-        if (posterPath.isNotEmpty()) {
+    private fun loadPosterImage(posterPath: String?) {
+        if (!posterPath.isNullOrEmpty()) {
             val basePosterPath = posterPath.getBasePosterPath()
             requireContext().loadImageFromURL(binding.itemMovieImage, basePosterPath)
         } else {
