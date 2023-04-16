@@ -1,5 +1,7 @@
 package com.mobillium.movieapp.feature_movie.presentation.movie_detail
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -7,9 +9,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.navArgs
 import com.mobillium.movieapp.R
+import com.mobillium.movieapp.core.utils.EndPoints
 import com.mobillium.movieapp.databinding.FragmentMovieDetailBinding
 import com.mobillium.movieapp.feature_movie.domain.entity.movie_details.MovieDetailEntity
+import com.mobillium.movieapp.feature_movie.presentation.common.extension.clearImageWithGlide
+import com.mobillium.movieapp.feature_movie.presentation.common.extension.getBasePosterPath
+import com.mobillium.movieapp.feature_movie.presentation.common.extension.loadImageFromURL
+import com.mobillium.movieapp.feature_movie.presentation.common.extension.reformatDate
 import com.mobillium.movieapp.feature_movie.presentation.common.extension.showGenericAlertDialog
 import com.mobillium.movieapp.feature_movie.presentation.common.extension.showToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,8 +34,10 @@ class DetailMovieFragment : Fragment(R.layout.fragment_movie_detail) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMovieDetailBinding.bind(view)
-        viewModel.getMovieDetail("TODO")
         observe()
+
+        val args: DetailMovieFragmentArgs by navArgs()
+        viewModel.getMovieDetail(args.movieId)
     }
 
     private fun observe() {
@@ -64,8 +74,30 @@ class DetailMovieFragment : Fragment(R.layout.fragment_movie_detail) {
         binding.loadingProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
+    private fun loadPosterImage(posterPath: String) {
+        if (posterPath.isNotEmpty()) {
+            val basePosterPath = posterPath.getBasePosterPath()
+            requireContext().loadImageFromURL(binding.itemMovieImage, basePosterPath)
+        } else {
+            requireContext().clearImageWithGlide(binding.itemMovieImage)
+        }
+    }
+
+    private fun listenImdbImageClick(imdbId: String) {
+        binding.movieItemImdbImage.setOnClickListener {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(EndPoints.IMDB_URL + imdbId))
+            startActivity(browserIntent)
+        }
+    }
+
     private fun handleMovieDetail(movieDetailEntity: MovieDetailEntity) {
-        // TODO:
+        binding.movieItemTitle.text = movieDetailEntity.title
+        binding.movieItemDescription.text = movieDetailEntity.overview
+        binding.movieItemReleaseDate.text = movieDetailEntity.releaseDate.reformatDate()
+        binding.movieItemRate.text = String.format("%.1f", movieDetailEntity.voteAverage)
+
+        loadPosterImage(movieDetailEntity.backdropPath)
+        listenImdbImageClick(movieDetailEntity.imdbId)
     }
 
     override fun onDestroyView() {
