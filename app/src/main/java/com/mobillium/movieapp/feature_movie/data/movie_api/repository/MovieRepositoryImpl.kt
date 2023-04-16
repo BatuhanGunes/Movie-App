@@ -5,7 +5,7 @@ import com.mobillium.movieapp.feature_movie.data.movie_api.remote.MovieService
 import com.mobillium.movieapp.feature_movie.domain.MovieRepository
 import com.mobillium.movieapp.feature_movie.domain.common.base.BaseResult
 import com.mobillium.movieapp.feature_movie.domain.entity.movie.ResponseEntity
-import com.mobillium.movieapp.feature_movie.domain.entity.movie_details.MovieDetails
+import com.mobillium.movieapp.feature_movie.domain.entity.movie_details.MovieDetailEntity
 import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -58,12 +58,12 @@ class MovieRepositoryImpl(private val movieService: MovieService) : MovieReposit
     }
 
     @WorkerThread
-    override fun getMovieDetails(movieId: String): Flow<BaseResult<MovieDetails>> {
+    override fun getMovieDetails(movieId: String): Flow<BaseResult<MovieDetailEntity>> {
         return flow {
             val response = movieService.getMovieDetails(movieId = movieId);
             if (response.isSuccessful) {
                 val body = response.body()!!
-                val responseEntity = MovieDetails(
+                val responseEntity = MovieDetailEntity(
                     adult = body.adult,
                     backdropPath = body.backdropPath,
                     belongsToCollection = body.belongsToCollection,
