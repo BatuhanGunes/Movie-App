@@ -24,6 +24,10 @@
         android:name="com.mobillium.movieapp.feature_movie.presentation.movie_detail.DetailMovieFragment"
         android:label="fragment_detail_movie"
         tools:layout="@layout/fragment_movie_detail">
+        <argument
+            android:name="movie_id"
+            app:argType="string"
+            app:nullable="false" />
     </fragment>
 
 </navigation>

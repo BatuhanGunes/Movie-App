@@ -2,5 +2,15 @@
     <string name="app_name">Movie App</string>
 
     <string name="button_text_ok">OK</string>
+    <string name="something_went_wrong">Something went wrong\nPlease try again</string>
     <string name="error_msg_and_error_code_message">Error Message: %s\nError Code: %d</string>
+    <string name="movie_rate_max_value">/10</string>
+
+    <string name="image_description_movie">Movie Image</string>
+    <string name="image_description_backdrop">Movie Backdrop Image</string>
+    <string name="image_description_imdb_icon">IMDB Logo</string>
+    <string name="icon_description_arrow">Arrow icon</string>
+    <string name="icon_description_rate_star">Movie Rate Icon</string>
+    <string name="shape_description_yellow_dot">Shape Yellow Dot</string>
+
 </resources>

@@ -64,31 +64,15 @@ class MovieRepositoryImpl(private val movieService: MovieService) : MovieReposit
             if (response.isSuccessful) {
                 val body = response.body()!!
                 val responseEntity = MovieDetailEntity(
-                    adult = body.adult,
                     backdropPath = body.backdropPath,
-                    belongsToCollection = body.belongsToCollection,
-                    budget = body.budget,
-                    genres = body.genres,
-                    homepage = body.homepage,
                     id = body.id,
                     imdbId = body.imdbId,
-                    originalLanguage = body.originalLanguage,
                     originalTitle = body.originalTitle,
                     overview = body.overview,
-                    popularity = body.popularity,
                     posterPath = body.posterPath,
-                    productionCompanies = body.productionCompanies,
-                    productionCountries = body.productionCountries,
                     releaseDate = body.releaseDate,
-                    revenue = body.revenue,
-                    runtime = body.runtime,
-                    spokenLanguages = body.spokenLanguages,
-                    status = body.status,
-                    tagline = body.tagline,
                     title = body.title,
-                    video = body.video,
-                    voteAverage = body.voteAverage,
-                    voteCount = body.voteCount,
+                    voteAverage = body.voteAverage
                 )
 
                 emit(BaseResult.Success(responseEntity))
