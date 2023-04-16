@@ -3,4 +3,9 @@
 
     <string name="button_text_ok">OK</string>
     <string name="error_msg_and_error_code_message">Error Message: %s\nError Code: %d</string>
+
+    <string name="movie_title">Movie Title</string>
+    <string name="movie_long_description">Long\nDescription</string>
+    <string name="movie_update_date">15.06.2021</string>
+    <string name="movie_image_description">Movie Image</string>
 </resources>
