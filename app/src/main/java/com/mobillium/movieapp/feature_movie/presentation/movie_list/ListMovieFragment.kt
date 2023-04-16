@@ -1,5 +1,6 @@
 package com.mobillium.movieapp.feature_movie.presentation.movie_list
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -7,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.mobillium.movieapp.R
 import com.mobillium.movieapp.databinding.FragmentMovieListBinding
 import com.mobillium.movieapp.feature_movie.domain.entity.movie.ResponseEntity
@@ -15,6 +17,7 @@ import com.mobillium.movieapp.feature_movie.presentation.common.extension.showTo
 import com.mobillium.movieapp.feature_movie.presentation.movie_list.adapters.MovieRecyclerViewAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
@@ -29,8 +32,31 @@ class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMovieListBinding.bind(view)
 
+        recyclerViewDisplay()
         getMoviesFromApi()
         observe()
+    }
+
+    private fun recyclerViewDisplay() {
+        when (resources.configuration.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> setUpRecyclerView(2)
+            else -> setUpRecyclerView(1)
+        }
+    }
+
+    private fun setUpRecyclerView(spanCount: Int) {
+        binding.rvNote.apply {
+            layoutManager =
+                StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
+            setHasFixedSize(true)
+            rvAdapter = MovieRecyclerViewAdapter()
+            adapter = rvAdapter
+            postponeEnterTransition(300L, TimeUnit.MILLISECONDS)
+            viewTreeObserver.addOnPreDrawListener {
+                startPostponedEnterTransition()
+                true
+            }
+        }
     }
 
     private fun getMoviesFromApi() {
