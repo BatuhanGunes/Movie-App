@@ -2,7 +2,7 @@ package com.mobillium.movieapp.feature_movie.domain.entity.movie_details
 
 import com.google.gson.annotations.SerializedName
 
-data class MovieDetails(
+data class MovieDetailEntity(
     @SerializedName("adult")
     val adult: Boolean,
     @SerializedName("backdrop_path")
