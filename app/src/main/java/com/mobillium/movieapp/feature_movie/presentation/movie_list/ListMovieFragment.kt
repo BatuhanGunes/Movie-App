@@ -121,14 +121,20 @@ class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
         when (uiState) {
             is MovieListFragmentUIState.Init -> Unit
             is MovieListFragmentUIState.IsLoading -> handleLoading(uiState.isLoading)
-            is MovieListFragmentUIState.ShowToast -> requireContext().showToast(uiState.message)
+            is MovieListFragmentUIState.ShowToast -> handleToastMessage(uiState.message)
             is MovieListFragmentUIState.SuccessUpcomingMovieList -> handleUpcomingMovie(uiState.responseEntity)
             is MovieListFragmentUIState.SuccessNowPlayingMovieList -> handleNowPlayingMovie(uiState.responseEntity)
             is MovieListFragmentUIState.Error -> handleError(uiState.message, uiState.errorCode)
         }
     }
 
+    private fun handleToastMessage(message: String) {
+        binding.errorTextView.visibility = View.VISIBLE
+        requireContext().showToast(message)
+    }
+
     private fun handleError(errorMessage: String, errorCode: Int) {
+        binding.errorTextView.visibility = View.VISIBLE
         requireContext().showGenericAlertDialog(
             message = getString(
                 R.string.error_msg_and_error_code_message,
