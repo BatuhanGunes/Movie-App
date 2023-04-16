@@ -1,12 +1,12 @@
 package com.mobillium.movieapp.feature_movie.presentation.movie_list.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.mobillium.movieapp.core.utils.EndPoints
 import com.mobillium.movieapp.databinding.CardViewMovieItemBinding
 import com.mobillium.movieapp.feature_movie.domain.entity.movie.MovieEntity
 import com.mobillium.movieapp.feature_movie.presentation.common.extension.clearImageWithGlide
@@ -15,7 +15,7 @@ import com.mobillium.movieapp.feature_movie.presentation.common.extension.loadIm
 import com.mobillium.movieapp.feature_movie.presentation.common.extension.reformatDate
 import com.mobillium.movieapp.feature_movie.presentation.movie_list.ListMovieFragmentDirections
 
-class MovieRecyclerViewAdapter :
+class MovieRecyclerViewAdapter(private val currentList: MutableList<MovieEntity>) :
     ListAdapter<MovieEntity, MovieRecyclerViewAdapter.MovieViewHolder>(DiffUtilCallback()) {
 
     inner class MovieViewHolder(private val itemBinding: CardViewMovieItemBinding) :
@@ -42,6 +42,13 @@ class MovieRecyclerViewAdapter :
         }
     }
 
+    fun addMovieList(movies: List<MovieEntity>) {
+        currentList.addAll(movies)
+        this.submitList(currentList)
+        val previousItemSize = currentList.size
+        notifyItemRangeInserted(previousItemSize, movies.size)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         return MovieViewHolder(
             CardViewMovieItemBinding.inflate(
@@ -53,6 +60,6 @@ class MovieRecyclerViewAdapter :
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) =
-        holder.bind(getItem(position))
+        holder.bind(currentList[position])
 
 }
