@@ -15,14 +15,13 @@ import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.interfaces.ItemClickListener
 import com.denzcoskun.imageslider.models.SlideModel
 import com.mobillium.movieapp.R
-import com.mobillium.movieapp.core.utils.EndPoints
 import com.mobillium.movieapp.databinding.FragmentMovieListBinding
 import com.mobillium.movieapp.feature_movie.domain.entity.movie.MovieEntity
-import com.mobillium.movieapp.feature_movie.domain.entity.movie.ResponseEntity
 import com.mobillium.movieapp.feature_movie.presentation.common.extension.getBaseBackdropPath
 import com.mobillium.movieapp.feature_movie.presentation.common.extension.showGenericAlertDialog
 import com.mobillium.movieapp.feature_movie.presentation.common.extension.showToast
 import com.mobillium.movieapp.feature_movie.presentation.movie_list.adapters.MovieRecyclerViewAdapter
+import com.mobillium.movieapp.feature_movie.presentation.movie_list.listeners.PaginationScrollListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
@@ -34,6 +33,7 @@ class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
     private var _binding: FragmentMovieListBinding? = null
     private val binding get() = _binding!!
 
+    private var isLoadingMovies = false
     private lateinit var navController: NavController
     private lateinit var rvAdapter: MovieRecyclerViewAdapter
 
@@ -46,6 +46,7 @@ class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
         getMoviesFromApi()
         recyclerViewDisplay()
         listenSwipeRefreshAction()
+        addScrollListener()
     }
 
     private fun recyclerViewDisplay() {
@@ -60,7 +61,7 @@ class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
             layoutManager =
                 StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
             setHasFixedSize(true)
-            rvAdapter = MovieRecyclerViewAdapter()
+            rvAdapter = MovieRecyclerViewAdapter(arrayListOf())
             adapter = rvAdapter
             postponeEnterTransition(300L, TimeUnit.MILLISECONDS)
             viewTreeObserver.addOnPreDrawListener {
@@ -70,15 +71,30 @@ class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
         }
     }
 
+    private fun addScrollListener() {
+        binding.rvMovies.addOnScrollListener(object :
+            PaginationScrollListener(binding.rvMovies.layoutManager as StaggeredGridLayoutManager) {
+            override fun loadMoreItems() {
+                viewModel.fetchUpComingMovies()
+            }
+
+            override fun isLastPage() = viewModel.isAllMoviesLoaded
+
+            override fun isLoading() = isLoadingMovies
+        })
+    }
+
     private fun listenSwipeRefreshAction() {
         binding.swipeListRefreshLayout.setOnRefreshListener {
+            binding.rvMovies.scrollToPosition(0)
             getMoviesFromApi()
         }
     }
 
     private fun getMoviesFromApi() {
-        viewModel.getNowPlayingMovies(1)
-        viewModel.getUpComingMovies(1)
+        viewModel.currentPageNumber = 1
+        viewModel.fetchNowPlayingMovies()
+        viewModel.fetchUpComingMovies()
     }
     private fun setUpSliderView(resultList: List<MovieEntity>) {
         val imageList = ArrayList<SlideModel>()
@@ -122,8 +138,8 @@ class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
             is MovieListFragmentUIState.Init -> Unit
             is MovieListFragmentUIState.IsLoading -> handleLoading(uiState.isLoading)
             is MovieListFragmentUIState.ShowToast -> handleToastMessage(uiState.message)
-            is MovieListFragmentUIState.SuccessUpcomingMovieList -> handleUpcomingMovie(uiState.responseEntity)
-            is MovieListFragmentUIState.SuccessNowPlayingMovieList -> handleNowPlayingMovie(uiState.responseEntity)
+            is MovieListFragmentUIState.SuccessUpcomingMovieList -> handleUpcomingMovie(uiState.movieEntityList)
+            is MovieListFragmentUIState.SuccessNowPlayingMovieList -> handleNowPlayingMovie(uiState.movieEntityList)
             is MovieListFragmentUIState.Error -> handleError(uiState.message, uiState.errorCode)
         }
     }
@@ -146,16 +162,17 @@ class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
 
     private fun handleLoading(isLoading: Boolean) {
         binding.loadingProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        isLoadingMovies = isLoading
     }
 
-    private fun handleNowPlayingMovie(responseEntity: ResponseEntity) {
+    private fun handleNowPlayingMovie(movieEntityList: List<MovieEntity>) {
         binding.swipeListRefreshLayout.isRefreshing = false
-        setUpSliderView(responseEntity.resultList)
+        setUpSliderView(movieEntityList)
     }
 
-    private fun handleUpcomingMovie(responseEntity: ResponseEntity) {
+    private fun handleUpcomingMovie(movieEntityList: List<MovieEntity>) {
         binding.swipeListRefreshLayout.isRefreshing = false
-        rvAdapter.submitList(responseEntity.resultList)
+        rvAdapter.addMovieList(movieEntityList)
     }
 
     override fun onDestroyView() {
