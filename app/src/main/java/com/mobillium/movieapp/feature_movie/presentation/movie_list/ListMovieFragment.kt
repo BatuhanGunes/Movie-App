@@ -33,6 +33,7 @@ class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
         _binding = FragmentMovieListBinding.bind(view)
 
         recyclerViewDisplay()
+        listenSwipeRefreshAction()
         getMoviesFromApi()
         observe()
     }
@@ -45,7 +46,7 @@ class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
     }
 
     private fun setUpRecyclerView(spanCount: Int) {
-        binding.rvNote.apply {
+        binding.rvMovies.apply {
             layoutManager =
                 StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
             setHasFixedSize(true)
@@ -56,6 +57,12 @@ class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
                 startPostponedEnterTransition()
                 true
             }
+        }
+    }
+
+    private fun listenSwipeRefreshAction() {
+        binding.swipeListRefreshLayout.setOnRefreshListener {
+            getMoviesFromApi()
         }
     }
 
@@ -100,10 +107,12 @@ class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
     }
 
     private fun handleNowPlayingMovie(responseEntity: ResponseEntity) {
+        binding.swipeListRefreshLayout.isRefreshing = false
         // TODO:
     }
 
     private fun handleUpcomingMovie(responseEntity: ResponseEntity) {
+        binding.swipeListRefreshLayout.isRefreshing = false
         rvAdapter.submitList(responseEntity.resultList)
     }
 
