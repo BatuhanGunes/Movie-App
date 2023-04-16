@@ -19,6 +19,7 @@ import com.mobillium.movieapp.core.utils.EndPoints
 import com.mobillium.movieapp.databinding.FragmentMovieListBinding
 import com.mobillium.movieapp.feature_movie.domain.entity.movie.MovieEntity
 import com.mobillium.movieapp.feature_movie.domain.entity.movie.ResponseEntity
+import com.mobillium.movieapp.feature_movie.presentation.common.extension.getBaseBackdropPath
 import com.mobillium.movieapp.feature_movie.presentation.common.extension.showGenericAlertDialog
 import com.mobillium.movieapp.feature_movie.presentation.common.extension.showToast
 import com.mobillium.movieapp.feature_movie.presentation.movie_list.adapters.MovieRecyclerViewAdapter
@@ -82,7 +83,7 @@ class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
     private fun setUpSliderView(resultList: List<MovieEntity>) {
         val imageList = ArrayList<SlideModel>()
         for (movieEntity in resultList) {
-            val imageUrl = EndPoints.getBaseBackdropPath(movieEntity.backdropPath)
+            val imageUrl = movieEntity.backdropPath.getBaseBackdropPath()
             imageList.add(SlideModel(imageUrl, movieEntity.title))
         }
         binding.imageSlider.setImageList(imageList, ScaleTypes.FIT)

@@ -10,7 +10,9 @@ import com.mobillium.movieapp.core.utils.EndPoints
 import com.mobillium.movieapp.databinding.CardViewMovieItemBinding
 import com.mobillium.movieapp.feature_movie.domain.entity.movie.MovieEntity
 import com.mobillium.movieapp.feature_movie.presentation.common.extension.clearImageWithGlide
+import com.mobillium.movieapp.feature_movie.presentation.common.extension.getBasePosterPath
 import com.mobillium.movieapp.feature_movie.presentation.common.extension.loadImageFromURL
+import com.mobillium.movieapp.feature_movie.presentation.common.extension.reformatDate
 import com.mobillium.movieapp.feature_movie.presentation.movie_list.ListMovieFragmentDirections
 
 class MovieRecyclerViewAdapter :
@@ -21,11 +23,11 @@ class MovieRecyclerViewAdapter :
         fun bind(movie: MovieEntity) {
             itemBinding.movieItemTitle.text = movie.title
             itemBinding.movieItemDescription.text = movie.overview
-            itemBinding.movieItemUpdateDate.text = movie.releaseDate
+            itemBinding.movieItemUpdateDate.text = movie.releaseDate.reformatDate()
 
             val rootContext: Context = itemBinding.root.context
             if (movie.posterPath.isNotEmpty()) {
-                val basePosterPath = EndPoints.getBasePosterPath(movie.posterPath)
+                val basePosterPath = movie.posterPath.getBasePosterPath()
                 rootContext.loadImageFromURL(itemBinding.itemMovieImage, basePosterPath)
             } else {
                 rootContext.clearImageWithGlide(itemBinding.itemMovieImage)
