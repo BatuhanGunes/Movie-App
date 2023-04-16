@@ -60,7 +60,7 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:2.6.0"
     implementation "com.squareup.okhttp3:logging-interceptor:3.12.0"
 
-    // 3rd party image slider library
+    // image slider library
     implementation 'com.github.denzcoskun:ImageSlideshow:0.1.2'
 
     // Glide
