@@ -8,9 +8,16 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.denzcoskun.imageslider.constants.ScaleTypes
+import com.denzcoskun.imageslider.interfaces.ItemClickListener
+import com.denzcoskun.imageslider.models.SlideModel
 import com.mobillium.movieapp.R
+import com.mobillium.movieapp.core.utils.EndPoints
 import com.mobillium.movieapp.databinding.FragmentMovieListBinding
+import com.mobillium.movieapp.feature_movie.domain.entity.movie.MovieEntity
 import com.mobillium.movieapp.feature_movie.domain.entity.movie.ResponseEntity
 import com.mobillium.movieapp.feature_movie.presentation.common.extension.showGenericAlertDialog
 import com.mobillium.movieapp.feature_movie.presentation.common.extension.showToast
@@ -26,16 +33,18 @@ class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
     private var _binding: FragmentMovieListBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var navController: NavController
     private lateinit var rvAdapter: MovieRecyclerViewAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMovieListBinding.bind(view)
+        navController = Navigation.findNavController(view)
 
+        observe()
+        getMoviesFromApi()
         recyclerViewDisplay()
         listenSwipeRefreshAction()
-        getMoviesFromApi()
-        observe()
     }
 
     private fun recyclerViewDisplay() {
@@ -69,6 +78,32 @@ class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
     private fun getMoviesFromApi() {
         viewModel.getNowPlayingMovies(1)
         viewModel.getUpComingMovies(1)
+    }
+    private fun setUpSliderView(resultList: List<MovieEntity>) {
+        val imageList = ArrayList<SlideModel>()
+        for (movieEntity in resultList) {
+            val imageUrl = EndPoints.getBaseBackdropPath(movieEntity.backdropPath)
+            imageList.add(SlideModel(imageUrl, movieEntity.title))
+        }
+        binding.imageSlider.setImageList(imageList, ScaleTypes.FIT)
+        listenImageSliderClick(resultList)
+    }
+
+    private fun listenImageSliderClick(resultList: List<MovieEntity>) {
+        binding.imageSlider.setItemClickListener(object : ItemClickListener {
+            override fun doubleClick(position: Int) {
+                // do nothing
+            }
+
+            override fun onItemSelected(position: Int) {
+                navigateMovieDetailFragment(resultList[position].id.toString())
+            }
+        })
+    }
+
+    private fun navigateMovieDetailFragment(movieId: String) {
+        val action = ListMovieFragmentDirections.actionListMovieFragmentToDetailMovieFragment(movieId)
+        navController.navigate(action)
     }
 
     private fun observe() {
@@ -108,7 +143,7 @@ class ListMovieFragment : Fragment(R.layout.fragment_movie_list) {
 
     private fun handleNowPlayingMovie(responseEntity: ResponseEntity) {
         binding.swipeListRefreshLayout.isRefreshing = false
-        // TODO:
+        setUpSliderView(responseEntity.resultList)
     }
 
     private fun handleUpcomingMovie(responseEntity: ResponseEntity) {

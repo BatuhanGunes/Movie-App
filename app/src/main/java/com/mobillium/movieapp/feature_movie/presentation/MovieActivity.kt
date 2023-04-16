@@ -1,6 +1,9 @@
 package com.mobillium.movieapp.feature_movie.presentation
 
+import android.graphics.Color
 import android.os.Bundle
+import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.mobillium.movieapp.R
 import com.mobillium.movieapp.feature_movie.presentation.common.extension.clearDiskCache
@@ -12,7 +15,18 @@ class MovieActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        makeStatusBarTransparent()
         setContentView(R.layout.activity_movie)
+    }
+
+    @Suppress("DEPRECATION")
+    private fun makeStatusBarTransparent() {
+        window.apply {
+            clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            statusBarColor = Color.TRANSPARENT
+        }
     }
 
     override fun onDestroy() {
