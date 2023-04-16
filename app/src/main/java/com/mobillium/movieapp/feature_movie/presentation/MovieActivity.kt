@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.mobillium.movieapp.R
 import com.mobillium.movieapp.feature_movie.presentation.common.extension.clearDiskCache
 import com.mobillium.movieapp.feature_movie.presentation.common.extension.clearGlideMemory
@@ -15,6 +16,7 @@ class MovieActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         makeStatusBarTransparent()
         setContentView(R.layout.activity_movie)
     }
