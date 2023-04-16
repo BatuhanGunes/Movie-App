@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/list_movie_fragment">
+
+    <fragment
+        android:id="@+id/list_movie_fragment"
+        android:name="com.mobillium.movieapp.feature_movie.presentation.movie_list.ListMovieFragment"
+        android:label="fragment_list_movie"
+        tools:layout="@layout/fragment_movie_list">
+        <action
+            android:id="@+id/action_listMovieFragment_to_detailMovieFragment"
+            app:destination="@id/detail_movie_fragment"
+            app:enterAnim="@anim/slide_right_in"
+            app:exitAnim="@anim/slide_left_out"
+            app:popEnterAnim="@anim/slide_left_in"
+            app:popExitAnim="@anim/slide_right_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detail_movie_fragment"
+        android:name="com.mobillium.movieapp.feature_movie.presentation.movie_detail.DetailMovieFragment"
+        android:label="fragment_detail_movie"
+        tools:layout="@layout/fragment_movie_detail">
+        <argument
+            android:name="movie_id"
+            app:argType="string"
+            app:nullable="false" />
+    </fragment>
+
+</navigation>
